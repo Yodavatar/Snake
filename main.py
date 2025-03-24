@@ -4,10 +4,11 @@
 #Game : Snake
 
 from app import*
-from testapp import*
+#from testapp import*
 
 if __name__ == "__main__":
-    App().mainloop()
+    Snake = App()
+    Snake.mainloop()
 
 #Coding : utf-8
 #Coding by Yodavatar

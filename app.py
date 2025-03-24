@@ -4,32 +4,38 @@
 #Game : Snake
 
 from player import*
-from tkinter import*
+import tkinter as tk
 
-class App(Tk):
+
+class App(tk.Tk):
     def __init__(self) -> None:
         "Open the App"
         super().__init__()
         self.height = 10
-        self.width = 5
+        self.width = 10
 
         #Create the grid
         self.init_grid()
 
         #Create the player
         self.player = Player(height=self.height,width=self.width)
+        self.player.newgame()
 
         #Touch event
         self.bind("<Key>", self.keyboard)
 
         #Window Parameters
         self.configure(bg="#333333", padx=10, pady=10)
-        self.geometry("700x800")
+        self.geometry("700x700")
         self.title("Snake")
 
-        #new game
-        #self.new_game()
+        #Update the grid
+        self.timeupdate = 200
+        self.after(self.timeupdate, self.update_grid)
 
+    def newgame(self) -> None:
+        "New game"
+        self.player.newgame()
 
     def init_grid(self) -> None:
         "init the grid with two parameters height and width"
@@ -50,31 +56,29 @@ class App(Tk):
             self.grid_label.append([])
             for j in range(self.width):
                 self.grid_label[i].append(None)
-                self.grid_label[i][j] = Label(self, text="", **self.default_button_style)
+                self.grid_label[i][j] = tk.Label(self, text="", **self.default_button_style)
                 self.grid_label[i][j].grid(column=i, row=j,**self.default_button_grid)
 
-    def new_game(self) -> None:
-        self.score = 0
-        self.gel = 0
-
-        self.grille = []
-        for i in range(4):
-            self.grille.append([])  
-            for o in range(4):
-                self.grille[i].append([])
-        
-        #2 cases at the beginning
-        for i in range(2):
-            self.module()
-        self.afficher()
-
     def update_grid(self) -> None:
+        #In the grid
+        # 0 corresponds to empty
+        # 1 corresponds to snake's body
+        # 2 corresponds to snake's head
+        # 3 corresponds to a apple
+        self.after(self.timeupdate, self.update_grid)
+        self.player.move()
         for i in range(self.height):  
             for o in range(self.width):
-                self.grid_label[i][o] = Label(self, text="", **self.default_button_style)
-                self.grid_label[i][o].grid(column=0, row=0,**self.default_button_grid)
-
-    
+                l = self.player.grid[i][o]
+                if l == 0:
+                    self.grid_label[i][o].config(bg="black")
+                if l == 1:
+                    self.grid_label[i][o].config(bg="brown")
+                if l == 2:
+                    self.grid_label[i][o].config(bg="purple")
+                if l == 3:
+                    self.grid_label[i][o].config(bg="red")
+ 
     def keyboard(self,event) -> None:
         "Manage touch"
         if event.keysym == "Up":
@@ -86,7 +90,7 @@ class App(Tk):
         elif event.keysym == "Right":
             self.player.ChangeDirection("Right")
         if event.keysym == "BackSpace":
-            self.new_game()
+            self.newgame()
         elif event.keysym == "Escape":
             exit()
 

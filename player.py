@@ -10,12 +10,12 @@ class Player():
         #In the grid
         # 0 corresponds to empty
         # 1 corresponds to snake's body
-        # 2 corresponds to a apple
-
+        # 2 corresponds to snake's head
+        # 3 corresponds to a apple
         self.height = height
         self.width = width
+        self.headposition = (0,0)
         self.snakebody = []
-        self.newgame()
 
     def newgame(self) -> None:
         "Setup a new game"
@@ -26,31 +26,33 @@ class Player():
             for _ in range(self.width):
                 self.grid[i].append(0)
 
+        self.snakebody = []
         self.snakebody.append((int(self.height/2),int(self.width/2)))
+        self.headposition = (int(self.height/2),int(self.width/2))
+        self.grid[int(self.height/2)][int(self.width/2)] = 2
         self.lastmove = "Right"
         self.apples = 0
         self.freeze = False
-        self.victory = False
+        self.modifieddirection = False
         self.newapple()
         self.newapple()
 
-    def checkvictory(self) -> None:
+    def checkvictory(self) -> bool:
         "Deduce if the game is a victory"
         sizesnake = len(self.snakebody)
         if self.height*self.width == sizesnake:
-            self.victory = True
-        else:
-            self.victory = False
+            return True
+        return False
 
     def checkend(self, i:int,j:int)-> bool:
         "Return if the position in i j is okay for the snake"
-        if self.grid[i][j] == 1:
+        if self.grid[i][j] == 1 or self.grid[i][j] == 2:
             return False
         return True
     
     def checkapple(self, i:int,j:int)-> bool:
         "Return if the position in i j is an apple"
-        if self.grid[i][j] == 2:
+        if self.grid[i][j] == 3:
             return True
         return False
 
@@ -64,7 +66,7 @@ class Player():
         
         pos = random.randint(0,len(freeposition)-1)
         i,j = freeposition[pos]
-        self.grid[i][j]=2
+        self.grid[i][j]=3
 
     def correction_position(self, i:int, j: int)-> tuple:
         "Return the new position if i or j are out the grid"
@@ -78,82 +80,82 @@ class Player():
             j = 0
         return (i,j)
 
-    def Move(self) -> None:
+    def reaction_move(self,headi:int,headj:int,i:int,j:int) -> None:
+        "Update the snake"
+        if self.checkend(i,j):
+            if self.checkapple(i,j):
+                self.apples += 1
+                self.snakebody.append((i,j))
+                self.grid[headi][headj] = 1
+                self.headposition = (i,j)
+                self.grid[i][j] = 2
+                self.newapple()
+            else:
+                self.snakebody.append((i,j))
+                self.grid[headi][headj] = 1
+                self.headposition = (i,j)
+                self.grid[i][j] = 2
+                tail_i,tail_j = self.snakebody[0]
+                self.grid[tail_i][tail_j] = 0
+                self.snakebody = self.snakebody[1:]
+        else:
+            self.End()
+
+    def move(self) -> None:
         "Update the game, the snake move"
         if self.freeze:
-            pass
+            return
         else:
-            i,j = self.snakebody[-1]#position of the head of the snake
-
+            self.modifieddirection = False
+            headi,headj = self.headposition#position of the head of the snake
             if self.lastmove == "Up":
-                i,j = self.correction_position(i,j-1)
-                if self.checkend(i,j):
-                    if self.checkapple(i,j):
-                        self.snakebody.append((i,j))
-                        self.newapple()
-                    else:
-                        self.snakebody.append((i,j))
-                        self.snakebody = self.snakebody[1:]
-                else:
-                    self.End()
+                i,j = self.correction_position(headi,headj-1)
+                self.reaction_move(headi,headj,i,j)
 
             elif self.lastmove == "Down":
-                i,j = self.correction_position(i,j+1)
-                if self.checkend(i,j):
-                    if self.checkapple(i,j):
-                        self.snakebody.append((i,j))
-                        self.newapple()
-                    else:
-                        self.snakebody.append((i,j))
-                        self.snakebody = self.snakebody[1:]
-                else:
-                    self.End()
+                i,j = self.correction_position(headi,headj+1)
+                self.reaction_move(headi,headj,i,j)
 
             elif self.lastmove == "Left":
-                i,j = self.correction_position(i-1,j)
-                if self.checkend(i,j):
-                    if self.checkapple(i,j):
-                        self.snakebody.append((i,j))
-                        self.newapple()
-                    else:
-                        self.snakebody.append((i,j))
-                        self.snakebody = self.snakebody[1:]
-                else:
-                    self.End()
+                i,j = self.correction_position(headi-1,headj)
+                self.reaction_move(headi,headj,i,j)
 
             elif self.lastmove == "Right":
-                i,j = self.correction_position(i+1,j)
-                if self.checkend(i,j):
-                    if self.checkapple(i,j):
-                        self.snakebody.append((i,j))
-                        self.newapple()
-                    else:
-                        self.snakebody.append((i,j))
-                        self.snakebody = self.snakebody[1:]
-                else:
-                    self.End()
+                i,j = self.correction_position(headi+1,headj)
+                self.reaction_move(headi,headj,i,j)
 
     def ChangeDirection(self, direction:str) -> None:
         "You can change direction only if you don't turn around"
         if self.lastmove == direction:
-            pass
+            return
         else:
-            if "Up" == direction and self.lastmove == "Down":
-                pass
-            else:
-                self.Up()
-            if "Down" == direction and self.lastmove == "Up":
-                pass
-            else:
-                self.Down()
-            if "Left" == direction and self.lastmove == "Right":
-                pass
-            else:
-                self.Left()
-            if "Right" == direction and self.lastmove == "Left":
-                pass
-            else:
-                self.Right()
+            if "Up" == direction and self.modifieddirection == False:
+                if self.lastmove == "Down":
+                    return
+                else:
+                    self.Up()
+                    self.modifieddirection = True
+
+            if "Down" == direction and self.modifieddirection == False:
+                if self.lastmove == "Up":
+                    return
+                else:
+                    self.Down()
+                    self.modifieddirection = True
+
+            if "Left" == direction and self.modifieddirection == False:
+                if self.lastmove == "Right":
+                    return
+                else:
+                    self.Left()
+                    self.modifieddirection = True
+
+            if "Right" == direction and self.modifieddirection == False:
+                if self.lastmove == "Left":
+                    return
+                else:
+                    self.Right()
+                    self.modifieddirection = True
 
     def Up(self) -> None:
         "Change the direction for Up"
@@ -174,19 +176,20 @@ class Player():
     def End(self) -> None:
         "Stop the game"
         self.freeze = True
-        self.checkvictory()
-        if self.victory:
+        if self.checkvictory():
             print("You win with "+str(self.apples)+" apples.")
         else:
             print("You lose with "+str(self.apples)+" apples.")
 
-    def __str__(self) -> None:
+    def __str__(self) -> str:
         "Print the grid"
+        text = ""
         for i in self.grid:
             line = ""
             for j in i:
-                line+=j
-            print(line)
+                line+=str(j)+" "
+            text+=line+"\n"
+        return text
 
 
 #Coding : utf-8
