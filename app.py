@@ -73,7 +73,7 @@ class App(tk.Tk):
                 if l == 0:
                     self.grid_label[i][o].config(bg="black")
                 if l == 1:
-                    self.grid_label[i][o].config(bg="brown")
+                    self.grid_label[i][o].config(bg="grey")
                 if l == 2:
                     self.grid_label[i][o].config(bg="purple")
                 if l == 3:
