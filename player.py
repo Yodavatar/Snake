@@ -1,6 +1,6 @@
 #Coding : utf-8
 #Coding by Yodavatar
-#Licensed code CC BY-NC-SA 4.0
+#Licensed Mozilla Public License 2.0
 #Game : Snake
 
 import random
@@ -194,5 +194,5 @@ class Player():
 
 #Coding : utf-8
 #Coding by Yodavatar
-#Licensed code CC BY-NC-SA 4.0
+#Licensed code Mozilla Public License 2.0
 #Game : Snake
