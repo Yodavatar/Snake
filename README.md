@@ -78,8 +78,8 @@ __**If you want contribute to this project.**__
 ## License
 
 
-This project is licensed under the  PUBLIC LICENSE.<br>
-See the [ LICENSE](LICENSE) file for details.<br>
+This project is licensed under the Mozilla Public License 2.0.<br>
+See the [Mozilla Public License 2.0](LICENSE) file for details.<br>
 
 
 ## Contact
