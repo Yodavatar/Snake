@@ -33,7 +33,7 @@ __**2 - Movement of the snake**__
 The snake can pass the border of the window.<br>
 He has also change his direction rotation around himself.<br>
 
-__**4 - Assets**__
+__**3 - Assets**__
 
 This project has not assets.
 
