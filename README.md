@@ -32,6 +32,8 @@ __**2 - Movement of the snake**__
 
 The snake can pass the border of the window.<br>
 He has also change his direction rotation around himself.<br>
+![image](https://github.com/user-attachments/assets/755702ae-4e23-40a8-b01c-ca1b89affdc5)
+
 
 __**3 - Assets**__
 
